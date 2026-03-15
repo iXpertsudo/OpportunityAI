@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<header id="hero" class="hero-section">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-content reveal active"> <!-- Active by default on load -->
+        <h1 class="hero-title">Unlock Your Future with <span class="gradient-text gradient-shift">AI</span></h1>
+        <p class="hero-subtitle">Discover scholarships, internships, and career opportunities using artificial intelligence.</p>
+        <div class="hero-ctas">
+            <a href="{{ url_for('profile') }}" class="btn btn-primary glow-btn"><i class="fa-solid fa-sparkles"></i> Find Opportunities</a>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <p>Your Journey Starts Here</p>
+        <i class="fa-solid fa-chevron-down animated-bounce"></i>
+    </div>
+</header>
+{% endblock %}

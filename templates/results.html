@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Results | OpportunityAI{% endblock %}
+
+{% block content %}
+<section id="results" class="section-container" style="min-height: calc(100vh - 80px); margin-top: 80px;">
+    <div class="section-header reveal active">
+        <h2>Your AI <span class="gradient-text">Recommendations</span></h2>
+        <p>Based on your profile, here are the top opportunities mapped out for you.</p>
+    </div>
+
+    <!-- AI Recommendation Results -->
+    <div class="results-grid" id="results-container">
+        {% if opportunities %}
+            {% for opp in opportunities %}
+                <div class="opportunity-card" style="animation: fadeIn 0.5s ease forwards {{ loop.index0 * 0.2 }}s; opacity: 0;" onclick="window.location.href='{{ url_for('opportunity_detail', opp_id=loop.index0) }}'">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <!-- Try to parse icon category -->
+                            {% if 'scholarship' in opp.category.lower() %}
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            {% elif 'internship' in opp.category.lower() %}
+                                <i class="fa-solid fa-briefcase"></i>
+                            {% elif 'hackathon' in opp.category.lower() or 'competition' in opp.category.lower() %}
+                                <i class="fa-solid fa-trophy"></i>
+                            {% else %}
+                                <i class="fa-solid fa-star"></i>
+                            {% endif %}
+                        </div>
+                        <div class="match-score"><i class="fa-solid fa-check-circle"></i> {{ opp.match_score }}</div>
+                    </div>
+                    <div class="card-title">{{ opp.name }}</div>
+                    <div class="card-category">{{ opp.category }}</div>
+                    <div class="card-description">{{ opp.description }}</div>
+                    <div class="card-footer">
+                        <span><i class="fa-regular fa-clock"></i> Deadline: {{ opp.deadline }}</span>
+                        <i class="fa-solid fa-arrow-right" style="color: var(--accent-secondary)"></i>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="glass-card" style="text-align: center; grid-column: 1 / -1;">
+                <h3>No opportunities found</h3>
+                <p>Try refining your profile to discover more opportunities.</p>
+                <br>
+                <a href="{{ url_for('profile') }}" class="btn btn-primary">Update Profile</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

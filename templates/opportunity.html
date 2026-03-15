@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}{{ opp.name }} | OpportunityAI{% endblock %}
+
+{% block content %}
+<section id="opportunity-detail" class="section-container" style="min-height: calc(100vh - 80px); margin-top: 80px;">
+    
+    <div class="glass-card reveal active" style="max-width: 900px; margin: 0 auto;">
+        
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('results') }}" class="btn btn-secondary" style="padding: 10px 20px; font-size: 0.9rem;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Results
+            </a>
+        </div>
+
+        <div class="modal-header" style="flex-wrap: wrap; margin-bottom: 20px;">
+            <div class="card-icon" style="width: 80px; height: 80px; font-size: 2.5rem; flex-shrink: 0;">
+                {% if 'scholarship' in opp.category.lower() %}
+                    <i class="fa-solid fa-graduation-cap"></i>
+                {% elif 'internship' in opp.category.lower() %}
+                    <i class="fa-solid fa-briefcase"></i>
+                {% elif 'hackathon' in opp.category.lower() or 'competition' in opp.category.lower() %}
+                    <i class="fa-solid fa-trophy"></i>
+                {% else %}
+                    <i class="fa-solid fa-star"></i>
+                {% endif %}
+            </div>
+            <div>
+                <h1 style="font-size: 2.5rem; margin-bottom: 5px;">{{ opp.name }}</h1>
+                <span class="card-category" style="margin-bottom: 0; font-size: 1rem;">{{ opp.category }}</span>
+            </div>
+        </div>
+        
+        <div class="match-score" style="display: inline-flex; margin-bottom: 30px; font-size: 1rem; padding: 8px 15px;">
+            <i class="fa-solid fa-check-circle"></i> {{ opp.match_score }} Match
+        </div>
+        
+        <div class="modal-body">
+            <h3>About the Opportunity</h3>
+            <p class="modal-text" style="font-size: 1.1rem;">{{ opp.detailed_info }}</p>
+            
+            <div class="modal-grid" style="margin-top: 40px;">
+                <div class="modal-info-box">
+                    <h4><i class="fa-solid fa-list-check"></i> Eligibility</h4>
+                    <ul class="modal-list">
+                        {% for req in opp.eligibility %}
+                            <li>{{ req }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="modal-info-box">
+                    <h4><i class="fa-solid fa-shoe-prints"></i> Application Steps</h4>
+                    <ul class="modal-list">
+                        {% for step in opp.application_steps %}
+                            <li>{{ step }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer" style="margin-top: 50px; padding-top: 30px;">
+            <div class="modal-deadline" style="font-size: 1.1rem;">
+                <i class="fa-regular fa-clock"></i> Deadline: <span>{{ opp.deadline }}</span>
+            </div>
+            <a href="{{ opp.link | default('#') }}" class="btn btn-primary" target="_blank" style="padding: 15px 40px; font-size: 1.1rem;">
+                Apply Now <i class="fa-solid fa-external-link-alt"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

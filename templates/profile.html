@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Profile | OpportunityAI{% endblock %}
+
+{% block content %}
+<section id="profile" class="section-container" style="min-height: calc(100vh - 80px); display: flex; flex-direction: column; justify-content: center; margin-top: 80px;">
+    <div class="section-header reveal active">
+        <h2>AI <span class="gradient-text">Profile Analysis</span></h2>
+        <p>Tell us about yourself, and our engine will find the perfect matches for your career journey.</p>
+    </div>
+
+    <div class="glass-card form-container reveal active">
+        <form id="ai-profile-form" action="{{ url_for('api_generate') }}" method="POST">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" placeholder="e.g. 20" required>
+                </div>
+                <div class="input-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" name="country" placeholder="e.g. United States" required>
+                </div>
+                <div class="input-group full-width">
+                    <label for="education">Education Level</label>
+                    <select id="education" name="education" required>
+                        <option value="">Select Level</option>
+                        <option value="High School">High School</option>
+                        <option value="Undergraduate">Undergraduate (Bachelors)</option>
+                        <option value="Graduate">Graduate (Masters/PhD)</option>
+                        <option value="Bootcamp/Self-Taught">Bootcamp / Self-taught</option>
+                    </select>
+                </div>
+                <div class="input-group full-width">
+                    <label for="skills">Key Skills (comma separated)</label>
+                    <input type="text" id="skills" name="skills" placeholder="e.g. Python, Design, Public Speaking" required>
+                </div>
+                <div class="input-group full-width">
+                    <label for="interests">Career Interests</label>
+                    <input type="text" id="interests" name="interests" placeholder="e.g. Artificial Intelligence, Web Development" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary fluid-btn ai-submit-btn" id="submit-btn" onclick="showLoadingState(event)">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Analyze with AI</span>
+                <div class="btn-loader hidden"></div>
+            </button>
+        </form>
+    </div>
+</section>
+
+<!-- Loading State Overlay (Optional enhancement, or just button loader) -->
+<div id="loading-overlay" class="modal-overlay hidden" style="z-index: 9999; flex-direction: column; gap: 20px;">
+    <div class="btn-loader" style="width: 50px; height: 50px; border-width: 4px;"></div>
+    <h3>AI is analyzing your profile...</h3>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showLoadingState(event) {
+        const form = document.getElementById('ai-profile-form');
+        if(form.checkValidity()) {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('loading-overlay').style.display = 'flex';
+            document.getElementById('loading-overlay').style.opacity = '1';
+            document.getElementById('loading-overlay').style.visibility = 'visible';
+            
+            const btn = document.getElementById('submit-btn');
+            btn.querySelector('.fa-wand-magic-sparkles').classList.add('hidden');
+            btn.querySelector('span').textContent = 'Processing...';
+            btn.querySelector('.btn-loader').classList.remove('hidden');
+        }
+    }
+</script>
+{% endblock %}

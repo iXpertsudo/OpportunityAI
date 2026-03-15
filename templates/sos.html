@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report SOS - Community SOS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🆘</span>
+                <h1>Community SOS</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/sos" class="nav-link sos-button">🚨 SOS</a></li>
+                <li><a href="/volunteer" class="nav-link">Volunteers</a></li>
+                <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="sos-container">
+        <div class="sos-header">
+            <h1>🚨 Report Emergency</h1>
+            <p class="subtitle">Quickly describe your emergency and get help</p>
+        </div>
+
+        <!-- Success Message (Hidden by default) -->
+        <div id="successMessage" class="alert alert-success" style="display: none;">
+            <div class="alert-content">
+                <span class="alert-icon">✅</span>
+                <div>
+                    <strong id="successTitle">SOS Received!</strong>
+                    <p id="successText">Your emergency has been classified and dispatched.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message (Hidden by default) -->
+        <div id="errorMessage" class="alert alert-error" style="display: none;">
+            <div class="alert-content">
+                <span class="alert-icon">❌</span>
+                <div>
+                    <strong>Error</strong>
+                    <p id="errorText">Please fill all required fields.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SOS Form -->
+        <div class="sos-form-container">
+            <form id="sosForm" method="POST" class="sos-form">
+                <!-- Description Field -->
+                <div class="form-group">
+                    <label for="description">Emergency Description <span class="required">*</span></label>
+                    <textarea 
+                        id="description" 
+                        name="description" 
+                        placeholder="Describe what's happening (e.g., car accident, heart attack, fire, break-in)"
+                        required
+                        rows="4"
+                        minlength="10"
+                    ></textarea>
+                    <small class="hint">Be as detailed as possible to help us classify and respond faster.</small>
+                </div>
+
+                <!-- Location Field -->
+                <div class="form-group">
+                    <label for="location">Location <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        id="location" 
+                        name="location" 
+                        placeholder="Enter your location (street address or landmark)"
+                        required
+                        minlength="5"
+                    />
+                    <small class="hint">Provide a specific location for faster volunteer dispatch.</small>
+                </div>
+
+                <!-- Type Field (Optional - will be auto-detected) -->
+                <div class="form-group">
+                    <label for="type">Emergency Type (Optional - AI will auto-detect)</label>
+                    <select id="type" name="type">
+                        <option value="">-- Let AI Detect --</option>
+                        <option value="Medical">🏥 Medical</option>
+                        <option value="Fire">🔥 Fire</option>
+                        <option value="Crime">🚨 Crime</option>
+                        <option value="Accident">🚗 Accident</option>
+                    </select>
+                    <small class="hint">Our AI can auto-detect the emergency type from your description.</small>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        🚨 SUBMIT SOS
+                    </button>
+                    <a href="/" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+
+            <!-- Submission Info -->
+            <div class="info-box">
+                <h3>📋 Important Information</h3>
+                <ul>
+                    <li>✅ Your emergency will be <strong>instantly classified</strong> using AI</li>
+                    <li>✅ Volunteers will be <strong>automatically dispatched</strong> to your location</li>
+                    <li>✅ You can track response in real-time on the <strong>Dashboard</strong></li>
+                    <li>⚠️ In life-threatening situations, also call emergency services (911)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Emergency Categories Info -->
+        <section class="categories-info">
+            <h2>Emergency Categories</h2>
+            <div class="categories-grid">
+                <div class="category-card medical">
+                    <div class="category-icon">🏥</div>
+                    <h3>Medical</h3>
+                    <p>Heart attack, severe bleeding, difficulty breathing, unconscious person</p>
+                </div>
+                <div class="category-card fire">
+                    <div class="category-icon">🔥</div>
+                    <h3>Fire</h3>
+                    <p>House fire, building fire, burning materials, smoke detection</p>
+                </div>
+                <div class="category-card crime">
+                    <div class="category-icon">🚨</div>
+                    <h3>Crime</h3>
+                    <p>Robbery, assault, break-in, theft, suspicious activity</p>
+                </div>
+                <div class="category-card accident">
+                    <div class="category-icon">🚗</div>
+                    <h3>Accident</h3>
+                    <p>Vehicle collision, hit and run, structural damage</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Community SOS. Saving lives through community collaboration.</p>
+    </footer>
+
+    <script>
+        // Handle form submission
+        const sosForm = document.getElementById('sosForm');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+
+        sosForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Get form data
+            const formData = new FormData(sosForm);
+            const description = formData.get('description');
+            const location = formData.get('location');
+
+            // Validate
+            if (!description || !location) {
+                showError('Please fill all required fields.');
+                return;
+            }
+
+            try {
+                // Submit form
+                const response = await fetch('/sos', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show success with AI classification
+                    showSuccess(data.type, data.confidence);
+                    
+                    // Reset form
+                    sosForm.reset();
+                    
+                    // Redirect after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 3000);
+                } else {
+                    showError('Failed to submit SOS. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('An error occurred. Please try again.');
+            }
+        });
+
+        function showSuccess(emergencyType, confidence) {
+            document.getElementById('successTitle').textContent = `✅ SOS Received and Classified!`;
+            document.getElementById('successText').innerHTML = 
+                `<strong>Type:</strong> ${emergencyType} (${Math.round(confidence)}% confidence)<br><strong>Status:</strong> Dispatching volunteers to your location...`;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

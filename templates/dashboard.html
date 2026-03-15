@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Community SOS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🆘</span>
+                <h1>Community SOS</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/sos" class="nav-link sos-button">🚨 SOS</a></li>
+                <li><a href="/volunteer" class="nav-link">Volunteers</a></li>
+                <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>📊 Live Dashboard</h1>
+            <p class="subtitle">Real-time emergency response monitoring</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon emergency">🚨</div>
+                <div class="stat-content">
+                    <h3>Total Emergencies</h3>
+                    <div class="stat-large">{{ stats.total_emergencies }}</div>
+                    <p class="stat-small">Active incidents</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon volunteer">👥</div>
+                <div class="stat-content">
+                    <h3>Total Volunteers</h3>
+                    <div class="stat-large">{{ stats.total_volunteers }}</div>
+                    <p class="stat-small">Community helpers</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon assigned">✅</div>
+                <div class="stat-content">
+                    <h3>Assigned Volunteers</h3>
+                    <div class="stat-large">{{ stats.assigned_volunteers }}</div>
+                    <p class="stat-small">Dispatched to emergencies</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon available">⏳</div>
+                <div class="stat-content">
+                    <h3>Unassigned Volunteers</h3>
+                    <div class="stat-large">{{ stats.unassigned_volunteers }}</div>
+                    <p class="stat-small">Ready for dispatch</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section class="reports-section">
+            <div class="reports-header">
+                <h2>📋 Emergency Reports</h2>
+                <span class="report-count">Total: {{ reports|length }}</span>
+                <a href="/sos" class="btn btn-small">+ New SOS</a>
+            </div>
+
+            {% if reports|length > 0 %}
+                <div class="reports-table-container">
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Location</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in reports %}
+                                <tr class="report-row report-{{ report.type|lower }}">
+                                    <td class="id-cell">#{{ report.id }}</td>
+                                    <td class="type-cell">
+                                        <span class="type-badge type-{{ report.type|lower }}">
+                                            {% if report.type == 'Medical' %}🏥{% elif report.type == 'Fire' %}🔥{% elif report.type == 'Crime' %}🚨{% elif report.type == 'Accident' %}🚗{% else %}❓{% endif %}
+                                            {{ report.type }}
+                                        </span>
+                                    </td>
+                                    <td class="description-cell" title="{{ report.description }}">
+                                        {{ report.description[:50] }}{% if report.description|length > 50 %}...{% endif %}
+                                    </td>
+                                    <td class="location-cell">
+                                        📍 {{ report.location }}
+                                    </td>
+                                    <td class="time-cell">
+                                        {{ report.time }}
+                                    </td>
+                                    <td class="status-cell">
+                                        <span class="status-badge status-{{ report.status|lower }}">
+                                            ● {{ report.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <h3>No emergencies reported yet</h3>
+                    <p>When someone submits an SOS, it will appear here in real-time.</p>
+                    <a href="/sos" class="btn btn-primary">Report an Emergency</a>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- Type Distribution Chart (Text-based) -->
+        <section class="chart-section">
+            <h2>📊 Emergency Type Distribution</h2>
+            <div class="type-distribution">
+                {% set medical = reports|selectattr('type', 'equalto', 'Medical')|list|length %}
+                {% set fire = reports|selectattr('type', 'equalto', 'Fire')|list|length %}
+                {% set crime = reports|selectattr('type', 'equalto', 'Crime')|list|length %}
+                {% set accident = reports|selectattr('type', 'equalto', 'Accident')|list|length %}
+                {% set total = reports|length %}
+
+                <div class="distribution-item">
+                    <div class="distribution-label">🏥 Medical</div>
+                    <div class="distribution-bar">
+                        <div class="bar medical-bar" style="width: {% if total > 0 %}{{ (medical / total) * 100 }}{% else %}0{% endif %}%"></div>
+                    </div>
+                    <div class="distribution-count">{{ medical }}</div>
+                </div>
+
+                <div class="distribution-item">
+                    <div class="distribution-label">🔥 Fire</div>
+                    <div class="distribution-bar">
+                        <div class="bar fire-bar" style="width: {% if total > 0 %}{{ (fire / total) * 100 }}{% else %}0{% endif %}%"></div>
+                    </div>
+                    <div class="distribution-count">{{ fire }}</div>
+                </div>
+
+                <div class="distribution-item">
+                    <div class="distribution-label">🚨 Crime</div>
+                    <div class="distribution-bar">
+                        <div class="bar crime-bar" style="width: {% if total > 0 %}{{ (crime / total) * 100 }}{% else %}0{% endif %}%"></div>
+                    </div>
+                    <div class="distribution-count">{{ crime }}</div>
+                </div>
+
+                <div class="distribution-item">
+                    <div class="distribution-label">🚗 Accident</div>
+                    <div class="distribution-bar">
+                        <div class="bar accident-bar" style="width: {% if total > 0 %}{{ (accident / total) * 100 }}{% else %}0{% endif %}%"></div>
+                    </div>
+                    <div class="distribution-count">{{ accident }}</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <h2>⚡ Quick Actions</h2>
+            <div class="action-buttons">
+                <a href="/sos" class="btn btn-primary">🚨 Submit New SOS</a>
+                <a href="/volunteer" class="btn btn-secondary">👥 View Volunteers</a>
+                <a href="/" class="btn btn-secondary">🏠 Home</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Community SOS. Saving lives through community collaboration.</p>
+    </footer>
+
+    <script>
+        // Auto-refresh dashboard every 10 seconds
+        setInterval(function() {
+            location.reload();
+        }, 10000);
+    </script>
+</body>
+</html>

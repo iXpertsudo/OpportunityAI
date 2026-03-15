@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteers - Community SOS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🆘</span>
+                <h1>Community SOS</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/sos" class="nav-link sos-button">🚨 SOS</a></li>
+                <li><a href="/volunteer" class="nav-link">Volunteers</a></li>
+                <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="volunteer-container">
+        <div class="volunteer-header">
+            <h1>👥 Community Volunteers</h1>
+            <p class="subtitle">Trained professionals ready to help in emergencies</p>
+        </div>
+
+        <!-- Volunteer Stats -->
+        <section class="volunteer-stats">
+            <div class="stat-item">
+                <h3>{{ volunteers|length }}</h3>
+                <p>Total Volunteers</p>
+            </div>
+            <div class="stat-item">
+                <h3>{{ volunteers|selectattr('availability', 'true')|list|length }}</h3>
+                <p>Available Now</p>
+            </div>
+            <div class="stat-item">
+                <h3>{{ volunteers|selectattr('availability', 'false')|list|length }}</h3>
+                <p>Currently Assigned</p>
+            </div>
+        </section>
+
+        <!-- Volunteers Grid -->
+        <section class="volunteers-grid">
+            {% for volunteer in volunteers %}
+                <div class="volunteer-card {% if volunteer.availability %}available{% else %}assigned{% endif %}">
+                    <!-- Header with Name and Status -->
+                    <div class="volunteer-header-row">
+                        <div>
+                            <h3 class="volunteer-name">{{ volunteer.name }}</h3>
+                            <p class="volunteer-id">ID: #{{ volunteer.id }}</p>
+                        </div>
+                        <div class="availability-badge {% if volunteer.availability %}badge-available{% else %}badge-assigned{% endif %}">
+                            {% if volunteer.availability %}
+                                ✅ Available
+                            {% else %}
+                                🔴 Assigned
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="volunteer-skills">
+                        <h4>Skills & Certifications</h4>
+                        <div class="skills-list">
+                            {% for skill in volunteer.skills %}
+                                <span class="skill-badge">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Availability Status -->
+                    <div class="volunteer-status">
+                        <div class="status-info">
+                            <span class="status-label">Status:</span>
+                            <span class="status-value">
+                                {% if volunteer.availability %}
+                                    Ready for dispatch
+                                {% else %}
+                                    Currently responding to emergency
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button class="btn btn-assign" {% if not volunteer.availability %}disabled{% endif %}>
+                        {% if volunteer.availability %}
+                            👉 Quick Assign
+                        {% else %}
+                            ⏳ Busy
+                        {% endif %}
+                    </button>
+                </div>
+            {% endfor %}
+        </section>
+
+        <!-- Volunteers Table View (for larger screens) -->
+        <section class="volunteers-table-section">
+            <h2>📋 Volunteer Directory</h2>
+            <div class="table-container">
+                <table class="volunteers-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Skills & Certifications</th>
+                            <th>Availability</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for volunteer in volunteers %}
+                            <tr class="volunteer-row">
+                                <td class="id-cell">#{{ volunteer.id }}</td>
+                                <td class="name-cell">{{ volunteer.name }}</td>
+                                <td class="skills-cell">
+                                    {% for skill in volunteer.skills %}
+                                        <span class="skill-tag">{{ skill }}</span>
+                                    {% endfor %}
+                                </td>
+                                <td class="availability-cell">
+                                    <span class="badge {% if volunteer.availability %}badge-green{% else %}badge-red{% endif %}">
+                                        {% if volunteer.availability %}✅ Yes{% else %}❌ No{% endif %}
+                                    </span>
+                                </td>
+                                <td class="status-cell">
+                                    {% if volunteer.availability %}
+                                        <span class="status-ready">🟢 Ready</span>
+                                    {% else %}
+                                        <span class="status-busy">🔴 Responding</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Skills Overview -->
+        <section class="skills-overview">
+            <h2>🎯 Skills Overview</h2>
+            <div class="skills-matrix">
+                {% set all_skills = [] %}
+                {% for volunteer in volunteers %}
+                    {% for skill in volunteer.skills %}
+                        {% if skill not in all_skills %}
+                            {% set _ = all_skills.append(skill) %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+
+                {% for skill in all_skills %}
+                    <div class="skill-card">
+                        <h3>{{ skill }}</h3>
+                        <div class="skill-volunteers">
+                            {% set count = 0 %}
+                            {% for volunteer in volunteers %}
+                                {% if skill in volunteer.skills %}
+                                    {% set count = count + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            <p><strong>{{ count }}</strong> volunteer{% if count != 1 %}s{% endif %} certified</p>
+                        </div>
+                        <div class="volunteer-names">
+                            {% for volunteer in volunteers %}
+                                {% if skill in volunteer.skills %}
+                                    <span class="mini-badge{% if volunteer.availability %} available{% endif %}">{{ volunteer.name }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="volunteer-cta">
+            <h2>Want to Help?</h2>
+            <div class="cta-content">
+                <p>Join our community of volunteers and help save lives. Volunteers receive training and certification in emergency response.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="alert('Join volunteer form coming soon!');">📝 Join as Volunteer</button>
+                    <a href="/dashboard" class="btn btn-secondary">📊 View Emergency Dashboard</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Community SOS. Saving lives through community collaboration.</p>
+    </footer>
+
+    <script>
+        // Handle assign button clicks
+        document.querySelectorAll('.btn-assign').forEach(button => {
+            button.addEventListener('click', function() {
+                if (!this.disabled) {
+                    alert('Volunteer assigned to emergency! ✅');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

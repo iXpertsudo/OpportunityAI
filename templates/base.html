@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover life-changing scholarships, internships, and hackathons with AI recommendations.">
+    <title>{% block title %}OpportunityAI | AI-Powered Discovery{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Static Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="logo" style="text-decoration: none; color: inherit;">
+            <i class="fa-solid fa-brain glow-icon"></i> Opportunity<span class="gradient-text">AI</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('profile') }}">Discover</a></li>
+            <li><a href="{{ url_for('guide') }}">Guide</a></li>
+            <li><a href="#" onclick="toggleChat(event)">Assistant</a></li>
+        </ul>
+        <button class="nav-btn">Sign In</button>
+    </nav>
+
+    <!-- Content Block -->
+    {% block content %}{% endblock %}
+
+    <!-- AI Chatbot UI (Available globally) -->
+    <div class="chatbot-wrapper" id="chatbot-wrapper">
+        <div class="chatbot-window glass-card hidden" id="chatbot-window">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <div>
+                        <div><i class="fa-solid fa-robot glow-icon"></i> OpportunityAI Assistant</div>
+                        <div class="chat-status"><span class="status-dot"></span> Online &amp; Ready</div>
+                    </div>
+                </div>
+                <button class="close-chat" onclick="toggleChat(event)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="chat-body" id="chat-body">
+                <!-- Initial message via JS -->
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Ask about opportunities...">
+                <button id="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane glow-icon"></i></button>
+            </div>
+        </div>
+        <button class="chatbot-toggle btn-primary glow-btn" onclick="toggleChat(event)">
+            <i class="fa-solid fa-comment-dots"></i>
+        </button>
+    </div>
+
+    <!-- Background Ambient Effects -->
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+
+    <!-- Static JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

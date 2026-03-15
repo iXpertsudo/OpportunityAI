@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Application Guide | OpportunityAI{% endblock %}
+
+{% block content %}
+<section id="guide" class="section-container" style="min-height: calc(100vh - 80px); margin-top: 80px;">
+    <div class="section-header reveal active">
+        <h2>Opportunity <span class="gradient-text">Application Guide</span></h2>
+        <p>Expert tips and strategies to help you land your dream scholarship, internship, or hackathon victory.</p>
+    </div>
+
+    <!-- Guide Content -->
+    <div class="career-grid">
+        
+        <!-- Strategy Card 1 -->
+        <div class="glass-card reveal active" style="margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                <div class="card-icon" style="width: 50px; height: 50px; font-size: 1.5rem;"><i class="fa-solid fa-pen-nib"></i></div>
+                <h3 style="font-size: 1.5rem; color: #fff;">Crafting the Perfect Essay</h3>
+            </div>
+            <p class="modal-text" style="font-size: 1.05rem;">
+                Scholarship and internship essays are where you truly stand out. AI can help you brainstorm, but your essay should remain deeply personal.
+            </p>
+            <ul class="modal-list">
+                <li><strong>Tell a Story:</strong> Don't just list achievements; frame them around a compelling narrative of overcoming a challenge or discovering a passion.</li>
+                <li><strong>Be Specific:</strong> Instead of "I like AI," write "I built a machine learning model to predict local crop yields."</li>
+                <li><strong>Address the Prompt:</strong> Ensure every paragraph serves the specific questions asked by the committee.</li>
+            </ul>
+        </div>
+
+        <!-- Strategy Card 2 -->
+        <div class="glass-card reveal active" style="margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                <div class="card-icon" style="width: 50px; height: 50px; font-size: 1.5rem;"><i class="fa-solid fa-laptop-code"></i></div>
+                <h3 style="font-size: 1.5rem; color: #fff;">Winning Hackathons</h3>
+            </div>
+            <p class="modal-text" style="font-size: 1.05rem;">
+                Hackathons are less about having perfectly clean code and more about executing a brilliant, complete presentation in 48 hours.
+            </p>
+            <ul class="modal-list">
+                <li><strong>The 80/20 Rule:</strong> 80% of your points come from the core feature and the pitch. Don't waste 10 hours on a login screen.</li>
+                <li><strong>API Integrations:</strong> Use powerful APIs (like OpenAI or Twilio) to easily add "wow" factor features.</li>
+                <li><strong>The Pitch is King:</strong> Practice your 3-minute demo thoroughly. Create a clear narrative: Problem -> Solution -> Demo -> Future Impact.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+    <div class="glass-card reveal active" style="margin-top: 40px; text-align: center; border-color: rgba(14, 165, 233, 0.4);">
+        <h3 style="color: #fff; margin-bottom: 15px;">Need Personalized Advice?</h3>
+        <p class="modal-text" style="margin-bottom: 20px;">Our AI Assistant is uniquely trained on career and application strategies. Try asking it for help refining your resume bullet points!</p>
+        <button class="btn btn-primary" onclick="toggleChat(event)"><i class="fa-solid fa-comment-dots"></i> Open AI Assistant</button>
+    </div>
+</section>
+{% endblock %}
